@@ -48,16 +48,10 @@ VALUES ($1::TEXT, $2::MONEY, $3::SMALLINT)RETURNING *`;
 
 cartItemsRoute.put("/cart-items/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const shopping_cart = req.body;
+  const quantity = req.body.quantity;
 
-  let sql =
-    "UPDATE shopping_cart SET $1::TEXT, $2::MONEY, $3::SMALLINT WHERE id=$4::int";
-  let params = [
-    shopping_cart.product,
-    shopping_cart.price,
-    shopping_cart.quantity,
-    id
-  ];
+  let sql = "UPDATE shopping_cart SET quantity=$1::INT WHERE id=$2::int";
+  let params = [quantity, id];
   pool.query(sql, params).then(result => {
     res.status(200);
     res.json(result.rows[0]);
@@ -67,6 +61,7 @@ cartItemsRoute.put("/cart-items/:id", (req, res) => {
 cartItemsRoute.delete("/cart-items/:id", (req, res) => {
   const id = parseInt(req.params.id);
   let sql = "DELETE FROM shopping_cart WHERE id=$1::int ";
+  let params = [id];
   pool.query(sql, params).then(() => {
     res.sendStatus(204);
   });
